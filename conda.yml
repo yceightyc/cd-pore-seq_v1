@@ -1,0 +1,73 @@
+name: cd-pore-seq_env
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # --------------------
+  # Python
+  # --------------------
+  - python=3.10.19
+  - pip
+
+  # --------------------
+  # Softwares
+  # --------------------
+  - bedtools=2.31.1
+  - f5c=1.6
+  - minimap2=2.30
+  - samtools=1.23
+  - nextflow=25.10.2
+
+  # --------------------
+  # Python libraries
+  # --------------------
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - joblib
+  - tqdm
+  - statsmodels
+  - patsy
+  - shap
+  - xgboost
+  - dask
+
+  # --------------------
+  # Bio Python
+  # --------------------
+  - biopython
+  - pysam
+  - parasail
+
+  # --------------------
+  # R base
+  # --------------------
+  - r-base>=4.3
+
+  # --------------------
+  # R packages 
+  # --------------------
+  - r-ggplot2
+  - r-dplyr
+  - r-tidyr
+  - r-purrr
+  - r-ggridges
+  - r-patchwork
+  - r-viridis
+  - r-ggrastr
+  - r-knitr
+  - r-kableextra
+  - r-data.table
+  - r-gtools
+  - r-irdisplay
+  - r-stringdist
+  - r-lsa
+
+  # --------------------
+  # Pip-only
+  # --------------------
+  - pip:
+      - bayesian-optimization==3.2.0

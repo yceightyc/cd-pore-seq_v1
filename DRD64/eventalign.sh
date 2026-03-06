@@ -1,0 +1,1 @@
+./bin/f5c eventalign --scale-events --print-read-names --pore r10 --min-recalib-events 20 -r ./input/simplex.fastq -b ./data/filterd_masked.bam -g ./input/unmask_reference_fasta_test10.fasta  -o data/eventalign_output.tsv
