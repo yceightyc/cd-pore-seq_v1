@@ -10,6 +10,10 @@ This repository contains a Nextflow pipeline for analysing **TelN library**.
 ```
 
 ## Quick Start
+**Extract test input data:**
+```bash
+tar -xvzf TelN.tar.gz
+```
 
 **Run the pipeline:**
 ```bash
@@ -172,4 +176,5 @@ i.e.
 Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O., Whitwham, A., Keane, T., McCarthy, S. A., Davies, R. M., & Li, H. (2021).
 Twelve years of SAMtools and BCFtools.
 GigaScience, 10(2), giab008.
+
 https://doi.org/10.1093/gigascience/giab008
