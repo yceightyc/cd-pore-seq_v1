@@ -10,6 +10,10 @@ This repository contains a Nextflow pipeline for analysing **UMI library**.
 ---
 
 ## Quick Start
+**Extract test input data:**
+```bash
+tar -xvzf UMI.tar.gz
+```
 
 **Run the pipeline:**
 ```bash
