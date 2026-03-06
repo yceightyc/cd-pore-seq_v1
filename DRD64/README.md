@@ -24,8 +24,7 @@ This repository contains a Nextflow pipeline for analysing **DRD64 library**.
 ## Quick Start
 **Extract input data:**
 ```bash
-tar -xvzf input_data.tar.gz
-tar -xvzf input/DRD64.tar.gz
+tar -xvzf DRD64.tar.gz
 ```
 
 **Run the pipeline:**
@@ -123,4 +122,5 @@ Gamaarachchi, H., Lam, C. W., Jayatilaka, G., Samarakoon, H., Simpson, J. T., Sm
 GPU accelerated adaptive banded event alignment for rapid comparative nanopore signal analysis.
 BMC Bioinformatics, 21(1), 343.
 https://doi.org/10.1186/s12859-020-03659-2
+
 
