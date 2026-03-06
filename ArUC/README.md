@@ -10,7 +10,7 @@ This repository contains a Nextflow pipeline for analysing **ArUC library**.
 ---
 
 ## Quick Start
-**Extract test input and output data:**
+**Extract test input data:**
 ```bash
 tar -xvzf ArUC.tar.gz
 ```
@@ -114,4 +114,5 @@ Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O.
 Twelve years of SAMtools and BCFtools.
 GigaScience, 10(2), giab008.
 https://doi.org/10.1093/gigascience/giab008
+
 
