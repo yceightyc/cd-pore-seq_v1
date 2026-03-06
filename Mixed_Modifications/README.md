@@ -17,6 +17,10 @@ This repository contains a Nextflow pipeline for analysing **Mixed Modifications
 ---
 
 ## Quick Start
+**Extract test input and output data:**
+```bash
+tar -xvzf Mixed_Modification.tar.gz
+```
 
 **Run the pipeline:**
 ```bash
@@ -138,4 +142,5 @@ Gamaarachchi, H., Samarakoon, H., Jenner, S. P., Ferguson, J. M., Amos, T. G., H
 Fast nanopore sequencing data analysis with SLOW5.
 Nature Biotechnology, 1–4.
 https://doi.org/10.1038/s41587-022-01383-6
+
 
