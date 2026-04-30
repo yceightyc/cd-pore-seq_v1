@@ -22,8 +22,6 @@ Reproducing the results:
 - Build enviornment using [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 ```bash
 # Clone this repository
-git clone https://git.ecdf.ed.ac.uk/s2404760/cd-pore-seq_v1.git 
-
 # Build enviornment
 cd cd-pore-seq_v1
 conda env create -f conda.yml
