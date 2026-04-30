@@ -27,7 +27,7 @@ cd cd-pore-seq_v1
 conda env create -f conda.yml
 ```
 
-**Download and extract input data from Edinburgh Datashare:**
+**Download and extract input data for reproducing the ananlysis from [Edinburgh Datashare](https://datashare.ed.ac.uk/handle/10283/9166):**
 ```bash
 # Go to the specific folder:
 e.g.
