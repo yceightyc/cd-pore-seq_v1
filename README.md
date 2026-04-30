@@ -1,10 +1,11 @@
 # CD-Pore-Seq_v1
 
-CD-pore-seq is an ONT nanopore-based sequencing technique for generating context-informed high-complexity duplex data for DNA modification models; and offers a tool to detect single DNA-embedded ribonucleotides.
+CD-pore-seq is an ONT nanopore-based sequencing technique for generating context-informed high-complexity duplex data for DNA modification modeling; and offers a tool to detect single DNA-embedded ribonucleotides.
 
 This repository contains:
 1. **Scripts** and **input data** to reproduce the results in the manuscript
 2. A **Tool with instructions** to predict **single DNA-embedded ribonucleotides** from nanopore sequencing
+3. A generalised method to prepare training data for **DNA modifications**.
 
 ---
 ## Table of Content
