@@ -7,6 +7,12 @@ This repository contains:
 2. A **Tool with instructions** to predict **single DNA-embedded ribonucleotides** from nanopore sequencing
 3. A generalised method to prepare training data for **DNA modifications**.
 
+Estimated installing time: 15min using Git clone.
+Estimated running time: 
+  1. Single rNMP predictor: 2-10 hours on CPU, depending on input size.
+  2. Pipeline for reproducing analysis: 5 min - 2 hours, depending on library, GPU required when stated.
+  3. Non-canonical nucleotide model training (see 'model_training'): 2 hourse, GPU required.
+     
 ---
 ## Table of Content
 Reproducing the results:
