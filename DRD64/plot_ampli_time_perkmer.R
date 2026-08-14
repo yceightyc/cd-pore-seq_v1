@@ -40,71 +40,121 @@ colnames(model_data) = c("read_name", "position", "ampl_mean", "ampl_stdv", "dwe
 
 merged_data <- rbind(ribo_data, ctl_data) 
 
-stats_merged <- merged_data %>%
-    group_by(position, contig) %>%
-    summarise(
-    ks_p_value = suppressWarnings(ks.test(
-      ampl_mean[Type == "Ctl"],
-      ampl_mean[Type == "Ribo"]
-    )$p.value),
-    U_p_value = suppressWarnings(wilcox.test(
-      ampl_mean[Type == "Ctl"],
-      ampl_mean[Type == "Ribo"]
-    )$p.value),
-    ks_p_value_time = suppressWarnings(ks.test(
-      dwell_time[Type == "Ctl"],
-      dwell_time[Type == "Ribo"]
-    )$p.value),
-    U_p_value_time = suppressWarnings(wilcox.test(
-      dwell_time[Type == "Ctl"],
-      dwell_time[Type == "Ribo"]
-    )$p.value),    
-    .groups = "drop"
-  ) %>%
-  mutate(
-    p_adj_ks = p.adjust(ks_p_value, method = "BH", n = 320),
-    significance_ks = case_when(
-      p_adj_ks <= 0.001 ~ "***",
-      p_adj_ks <= 0.01  ~ "**",
-      p_adj_ks <= 0.05  ~ "*",
-      TRUE ~ as.character(round(p_adj_ks, 2))
-    ),
-    p_adj_U = p.adjust(U_p_value, method = "BH", n = 320),
-     significance_U = case_when(
-      p_adj_U <= 0.001 ~ "***",
-      p_adj_U <= 0.01  ~ "**",
-      p_adj_U <= 0.05  ~ "*",
-      TRUE ~ as.character(round(p_adj_U, 2))
-    ),
-    p_adj_ks_time = p.adjust(ks_p_value_time, method = "BH", n = 320),
-    significance_ks_time = case_when(
-      p_adj_ks_time <= 0.001 ~ "***",
-      p_adj_ks_time <= 0.01  ~ "**",
-      p_adj_ks_time <= 0.05  ~ "*",
-      TRUE ~ as.character(round(p_adj_ks_time, 2))
-    ),
-    p_adj_U_time = p.adjust(U_p_value_time, method = "BH", n = 320),
-     significance_U_time = case_when(
-      p_adj_U_time <= 0.001 ~ "***",
-      p_adj_U_time <= 0.01  ~ "**",
-      p_adj_U_time <= 0.05  ~ "*",
-      TRUE ~ as.character(round(p_adj_U_time, 2))
-    ),
-    effect_U <- effectsize::rank_biserial(
-     ampl_mean ~ Type,
-     data = data.frame(
-      ampl_mean = ampl_mean,
-      Type = Type
-     )
-    )$r_rank_biserial ,
+stats_merged <- merged_data %>% 
+  group_by(position, contig) %>% 
+  summarise( 
+    n_ctl  = sum(Type == "Ctl" & !is.na(ampl_mean)), 
+    n_ribo = sum(Type == "Ribo" & !is.na(ampl_mean)), 
+ 
+    n_ctl_time  = sum(Type == "Ctl" & !is.na(dwell_time)), 
+    n_ribo_time = sum(Type == "Ribo" & !is.na(dwell_time)), 
+ 
+    ks_p_value = suppressWarnings( 
+      ks.test( 
+        ampl_mean[Type == "Ctl"], 
+        ampl_mean[Type == "Ribo"] 
+      )$p.value 
+    ), 
+ 
+    U_p_value = suppressWarnings( 
+      wilcox.test( 
+        ampl_mean[Type == "Ctl"], 
+        ampl_mean[Type == "Ribo"], 
+        exact = FALSE, 
+        correct = FALSE 
+      )$p.value 
+    ), 
 
-    effect_U_time <- effectsize::rank_biserial(
-     dwell_time ~ Type,
-     data = data.frame(
-      dwell_time = dwell_time,
-      Type = Type
-     )
-    )$r_rank_biserial
+    effect_U = suppressWarnings(
+      effectsize::rank_biserial(
+        ampl_mean ~ Type,
+        data = data.frame(
+          ampl_mean = ampl_mean,
+          Type = Type
+        )
+      )$r_rank_biserial
+    ),
+ 
+    ks_p_value_time = suppressWarnings( 
+      ks.test( 
+        dwell_time[Type == "Ctl"], 
+        dwell_time[Type == "Ribo"] 
+      )$p.value 
+    ), 
+ 
+    U_p_value_time = suppressWarnings( 
+      wilcox.test( 
+        dwell_time[Type == "Ctl"], 
+        dwell_time[Type == "Ribo"], 
+        exact = FALSE, 
+        correct = FALSE 
+      )$p.value 
+    ), 
+
+    effect_U_time = suppressWarnings(
+      effectsize::rank_biserial(
+        dwell_time ~ Type,
+        data = data.frame(
+          dwell_time = dwell_time,
+          Type = Type
+        )
+      )$r_rank_biserial
+    ),
+ 
+    .groups = "drop" 
+  ) %>% 
+  mutate( 
+    p_adj_ks = p.adjust( 
+      ks_p_value, 
+      method = "BH", 
+      n = 320 
+    ), 
+ 
+    p_adj_U = p.adjust( 
+      U_p_value, 
+      method = "BH", 
+      n = 320 
+    ), 
+ 
+    p_adj_ks_time = p.adjust( 
+      ks_p_value_time, 
+      method = "BH", 
+      n = 320 
+    ), 
+ 
+    p_adj_U_time = p.adjust( 
+      U_p_value_time, 
+      method = "BH", 
+      n = 320 
+    ), 
+ 
+    significance_ks = case_when( 
+      p_adj_ks <= 0.001 ~ "***", 
+      p_adj_ks <= 0.01  ~ "**", 
+      p_adj_ks <= 0.05  ~ "*", 
+      TRUE ~ as.character(round(p_adj_ks, 2)) 
+    ), 
+ 
+    significance_U = case_when( 
+      p_adj_U <= 0.001 ~ "***", 
+      p_adj_U <= 0.01  ~ "**", 
+      p_adj_U <= 0.05  ~ "*", 
+      TRUE ~ as.character(round(p_adj_U, 2)) 
+    ), 
+ 
+    significance_ks_time = case_when( 
+      p_adj_ks_time <= 0.001 ~ "***", 
+      p_adj_ks_time <= 0.01  ~ "**", 
+      p_adj_ks_time <= 0.05  ~ "*", 
+      TRUE ~ as.character(round(p_adj_ks_time, 2)) 
+    ), 
+ 
+    significance_U_time = case_when( 
+      p_adj_U_time <= 0.001 ~ "***", 
+      p_adj_U_time <= 0.01  ~ "**", 
+      p_adj_U_time <= 0.05  ~ "*", 
+      TRUE ~ as.character(round(p_adj_U_time, 2)) 
+    )
   )
 
 contigs <- mixedsort(unique(ribo_data$contig))
