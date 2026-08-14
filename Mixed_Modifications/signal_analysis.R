@@ -156,6 +156,12 @@ compare_contigs <- function(mod_name, control_name, n_total = 9) {
            position %in% 26:34) %>%
     group_by(position) %>%
     summarise(
+      n_ctl  = sum(contig == control_name & !is.na(mean)),
+      n_mod = sum(contig == mod_name & !is.na(mean)),
+
+      n_ctl_time  = sum(contig == control_name & !is.na(sum)),
+      n_mod_time = sum(contig == mod_name & !is.na(sum)),
+
       ks_p_value = suppressWarnings(
         ks.test(mean[contig == control_name], mean[contig == mod_name])$p.value
       ),
@@ -199,6 +205,22 @@ compare_contigs <- function(mod_name, control_name, n_total = 9) {
         p_adj_U_time <= 0.05  ~ "*",
         TRUE ~ as.character(round(p_adj_U_time, 2))
       ),
+      z_U = qnorm(
+      U_p_value / 2,
+      lower.tail = FALSE
+    ),
+
+    effect_U = abs(z_U) /
+      sqrt(n_ctl + n_mod),
+
+    z_U_time = qnorm(
+      U_p_value_time / 2,
+      lower.tail = FALSE
+    ),
+
+    effect_U_time = abs(z_U_time) /
+      sqrt(n_ctl_time + n_mod_time),
+
       mod = mod_name,
       control = control_name
     ) %>%
@@ -874,6 +896,53 @@ html_doc <- paste0(
 )
 outfile <- "./signal_analysis/signal_stats_table.html"
 writeLines(html_doc, outfile, useBytes = TRUE)
+
+stats_fmt_effect_size <- stats_all %>%
+  mutate(
+    Kmer = position - 25,
+    Amplitude = effect_U ,
+    Dwell_time = effect_U_time
+  ) %>%
+  select(mod, control, Kmer, Amplitude, Dwell_time)
+
+stats_wide_effect_size <- stats_fmt_effect_size %>%
+  pivot_wider(
+    id_cols = c(mod, control),
+    names_from = Kmer,
+    values_from = c(Amplitude, Dwell_time),
+    names_glue = "{Kmer}_{.value}"
+  )
+
+tbl_effect <- stats_wide_effect_size %>%
+  kbl(align = "c", booktabs = TRUE,
+      col.names = c("Modification", "Control",
+                  rep(c("Amplitude", "Dwell time"), 9)
+                  ), escape = FALSE) %>%
+  add_header_above(c(" " = 2,
+                     "Kmer Position 1" = 2,
+                     "Kmer Position 2" = 2,
+                     "Kmer Position 3" = 2,
+                     "Kmer Position 4" = 2,
+                     "Kmer Position 5" = 2,
+                     "Kmer Position 6" = 2,
+                     "Kmer Position 7" = 2,
+                     "Kmer Position 8" = 2,
+                     "Kmer Position 9" = 2)) %>%
+  kable_styling(full_width = FALSE, position = "center", font_size = 12)
+
+effect_tbl_html <- as.character(tbl_effect)
+effect_html_doc <- paste0(
+  "<!doctype html><html><head><meta charset='UTF-8'>",
+  "<style>
+    body, table { font-family: 'Times New Roman', Times, serif; }
+    table { border-collapse: collapse; margin: 24px auto; font-size: 16px}
+    th, td { padding: 6px 10px; }
+  </style></head><body>",
+  effect_tbl_html,
+  "</body></html>"
+)
+outfile_effect <- "./signal_effect_size.html"
+writeLines(effect_html_doc, outfile_effect, useBytes = TRUE)
 
 summarised_new <- summarised %>%
     mutate(model_deviation = mean - model_mean) %>%
