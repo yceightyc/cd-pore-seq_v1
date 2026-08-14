@@ -9,6 +9,7 @@ library(knitr)
 library(kableExtra)
 library(ggrastr)
 library(viridis)
+library(effectsize)
 
 data <- fread("./data/eventalign_output.tsv", sep = "\t", header = TRUE)
 data_sum <- data %>%
@@ -88,7 +89,22 @@ stats_merged <- merged_data %>%
       p_adj_U_time <= 0.01  ~ "**",
       p_adj_U_time <= 0.05  ~ "*",
       TRUE ~ as.character(round(p_adj_U_time, 2))
-    )
+    ),
+    effect_U <- effectsize::rank_biserial(
+     ampl_mean ~ Type,
+     data = data.frame(
+      ampl_mean = ampl_mean,
+      Type = Type
+     )
+    )$r_rank_biserial ,
+
+    effect_U_time <- effectsize::rank_biserial(
+     dwell_time ~ Type,
+     data = data.frame(
+      dwell_time = dwell_time,
+      Type = Type
+     )
+    )$r_rank_biserial
   )
 
 contigs <- mixedsort(unique(ribo_data$contig))
@@ -618,6 +634,122 @@ html_doc <- paste0(
   tbl_html,
   "</body></html>"
 )
+
+effect_data <- stats_withRinfo %>%
+  select(
+    position,
+    trinu,
+    effect_U,
+    effect_U_time
+  )
+
+colnames(effect_data) <- c(
+  "Kmer",
+  "DRD",
+  "effect_U",
+  "effect_U_time"
+)
+
+
+effect_fmt <- effect_data %>%
+  mutate(
+    Amplitude = effect_U,
+    Dwell_time = effect_U_time
+  ) %>%
+  select(
+    DRD,
+    Kmer,
+    Amplitude,
+    Dwell_time
+  )
+
+
+effect_wide <- effect_fmt %>%
+  pivot_wider(
+    id_cols = c(DRD),
+    names_from = Kmer,
+    values_from = c(
+      Amplitude,
+      Dwell_time
+    ),
+    names_glue = "{Kmer}_{.value}"
+  )
+
+
+# Reorder effect-size columns
+id_cols_effect <- c("DRD")
+
+other_cols_effect <- setdiff(
+  names(effect_wide),
+  id_cols_effect
+)
+
+effect_wide <- effect_wide[
+  ,
+  c(
+    id_cols_effect,
+    mixedsort(other_cols_effect)
+  )
+]
+
+effect_tbl <- effect_wide %>%
+  kbl(
+    align = "c",
+    booktabs = TRUE,
+    col.names = c(
+      "DRD",
+      rep(
+        c(
+          "Amplitude",
+          "Dwell time"
+        ),
+        5
+      )
+    ),
+    escape = FALSE
+  ) %>%
+  add_header_above(
+    c(
+      " " = 1,
+      "Kmer Position 4" = 2,
+      "Kmer Position 5" = 2,
+      "Kmer Position 6" = 2,
+      "Kmer Position 7" = 2,
+      "Kmer Position 8" = 2
+    )
+  ) %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 12
+  )
+
+
+effect_tbl_html <- as.character(
+  effect_tbl
+)
+
+effect_html_doc <- paste0(
+  "<!doctype html><html><head><meta charset='UTF-8'>",
+  "<style>
+    body, table {
+      font-family: Arial, sans-serif;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 24px auto;
+      font-size: 16px;
+    }
+    th, td {
+      padding: 6px 10px;
+    }
+  </style></head><body>",
+  effect_tbl_html,
+  "</body></html>"
+)
+
+outfile_effect <- "./data/effect_size_table.html"
+writeLines(effect_html_doc, outfile_effect, useBytes = TRUE)
 
 heat_data <- sig_data %>%
   select(DRD, Kmer, p_adj_U, p_adj_U_time) %>%
